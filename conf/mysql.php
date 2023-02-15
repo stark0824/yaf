@@ -1,6 +1,6 @@
 <?php
 
-$db['admin']['manager'] =
+$db['admin'] =
       [
         'host' => '192.168.31.252',
         'port' => '3306',

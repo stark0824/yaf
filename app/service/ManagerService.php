@@ -34,4 +34,6 @@ class ManagerService {
         if(empty($id)) return [];
         return $this->model->getManagerById($id);
     }
+
+
 }

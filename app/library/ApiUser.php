@@ -11,7 +11,9 @@ class ApiUser extends ApiBase
     private $_userInfo = [];
     public $userInfo = [];
     public $publicAction = [
-        '/manager/getinfo', //
+        '/manager/getinfo',
+        '/authority/getmangermenu', // 获取菜单
+        '/manager/managerlogout', // 登出操作
     ];
     private $_authorityParams = [];
     private $_authorityIds = [];
@@ -42,12 +44,16 @@ class ApiUser extends ApiBase
 
             $roleId = $this->userInfo['role_id'];
             $roleIds = $roleId ? explode(',', $roleId) : [];
-            $managerRole = ChangpeiModule_Cpwxw_Admin_ManagerRole::getInstance()->getManagerRoleByIds($roleIds);
+
+            $service = new ManagerRoleService();
+            $managerRole = $service->getManagerRoleByIds($roleIds);
 
             if (!empty($managerRole)) {
                 $result = [];
                 array_map(function ($value) use (&$result) {
-                    $result = array_merge($result, explode(',', $value['vm_authority']));
+                    if(isset($value['vm_authority'])){
+                        $result = array_merge($result, explode(',', $value['vm_authority']));
+                    }
                 }, $managerRole);
                 $authority = $result;
             } else {
@@ -57,16 +63,10 @@ class ApiUser extends ApiBase
             $this->_authorityIds = $authority;
 
             if ($this->_authorityIds || $this->userInfo['is_administrator']) {
-                $search = [
-                    'where' => [
-                        'delete' => 0,
-                        'controller' => $controller,
-                        'action' => $action
-                    ]
-                ];
-                $authorityList = ChangpeiModule_Cpwxw_Admin_VmManagerAuthority::getInstance()
-                    ->getAllByPrepareSql([], $search, true);
+                $manager = new ManagerRoleService();
+                $authorityList = $manager->getAuthListByAction($controller,$action);
                 $this->_authorityParams = [];
+
                 foreach ($authorityList as $authority) {
                     if (in_array($authority['id'], $this->_authorityIds, true)
                         || $this->userInfo['is_administrator']) {

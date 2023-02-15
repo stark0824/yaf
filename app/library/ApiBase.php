@@ -134,11 +134,11 @@ class ApiBase extends Yaf_Controller_Abstract
             $msg = $res['_msg_'];
             unset($res['_msg_']);
         } else {
-            //$msg = Message::getMessage($code);
+            $msg = Message::getMessage($code);
         }
 
         $responseData['code'] = $code;
-        //$responseData['msg'] = $msg;
+        $responseData['msg'] = $msg;
         $responseData['data'] = $res;
 
         $this->getResponse()->setHeader('Content-Type', 'application/json; charset=utf-8');

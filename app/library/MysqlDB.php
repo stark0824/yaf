@@ -9,7 +9,7 @@
 class MysqlDB {
     public $conn = null;
 
-    public function __construct($dbName = 'admin',$tableName='manager')
+    public function __construct($dbName = 'admin',$tableName)
     {
         $this->conn = $this->conn($dbName ,$tableName );
         return $this;
@@ -17,8 +17,9 @@ class MysqlDB {
 
     private function conn($dbName ,$tableName )
     {
-        $dbConfig = require_once APPLICATION_PATH .'/conf/mysql.php';
-        $config = $dbConfig[$dbName][$tableName];
+        $dbConfig = require APPLICATION_PATH .'/conf/mysql.php';
+        $config = $dbConfig[$dbName];
+
         $dsn="mysql:host={$config['host']};dbname={$config['database']};port={$config['port']}";
         $user = $config['user'];
         $pass = $config['password'];
